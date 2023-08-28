@@ -2,6 +2,7 @@ module main
 
 import vweb
 import db.sqlite
+import math
 
 struct App {
 	vweb.Context
@@ -10,7 +11,8 @@ mut:
 }
 
 struct Product {
-	id           int
+	id int
+mut:
 	quantity     int
 	name         string
 	description  string
@@ -47,16 +49,16 @@ fn main() {
 	app.db.exec('INSERT INTO banner (date, message) VALUES ("Aug 27", "Now roasting Brazil Cerado!")') or {
 		panic(err)
 	}
-	// app.db.exec('INSERT INTO products (quantity,  name, description, price, price_break, break_amount) VALUES
-	// 				("22", "Regular Blend", "Our most loved blend of coffee. Featuring coffees from South America and Northern Africa", "11.00", "4", "1")') or {
-	// 	panic(err)
-	// }
+	app.db.exec('INSERT INTO products (quantity,  name, description, price, price_break, break_amount) VALUES
+					("22", "Regular Blend", "Our most loved blend of coffee. Featuring coffees from South America and Northern Africa", "11.00", "4", "1")') or {
+		panic(err)
+	}
 
 	app.serve_static('/output.css', 'output.css')
 	app.serve_static('/favicon.ico', 'favicon.ico')
 	app.serve_static('/htmx.min.js', 'htmx.min.js')
 
-	vweb.run(app, 8080)
+	vweb.run(app, 8088)
 }
 
 ['/']
@@ -67,7 +69,10 @@ pub fn (app &App) index() vweb.Result {
 
 ['/shop']
 pub fn (mut app App) shop() vweb.Result {
-	products := app.get_products() or { []Product{} }
+	mut products := app.get_products() or { []Product{} }
+	for i, product in products {
+		products[i].quantity = math.min(4, product.quantity)
+	}
 	return $vweb.html()
 }
 

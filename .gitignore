@@ -1,0 +1,31 @@
+.DS_Store
+.idea
+*.log
+tmp/
+# Binaries for programs and plugins
+main
+blog
+tailwind
+src
+src/src
+*.exe
+*.exe~
+*.so
+*.dylib
+*.dll
+
+# Ignore binary output folders
+bin/
+db/
+
+# Ignore common editor/system specific metadata
+.DS_Store
+.idea/
+.vscode/
+*.iml
+
+# ENV
+.env
+
+# vweb and database
+*.db

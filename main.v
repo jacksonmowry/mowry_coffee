@@ -3,22 +3,36 @@ module main
 import vweb
 import db.sqlite
 import math
+import rand
 
 struct App {
 	vweb.Context
 mut:
-	db sqlite.DB
+	db   sqlite.DB
+	cart Cart
 }
 
 struct Product {
 	id int
 mut:
-	quantity     int
+	img          string
+	q_on_hand    int
 	name         string
 	description  string
 	price        f64
 	price_break  int
 	break_amount int
+}
+
+struct Cart_Product {
+	product  Product
+	quantity int
+}
+
+struct Cart {
+	items []Cart_Product
+mut:
+	cart_id string
 }
 
 fn main() {
@@ -30,27 +44,40 @@ fn main() {
 					id INTEGER PRIMARY KEY,
 					date TEXT NOT NULL,
 					message TEST NOT NULL
- 				)') or {
-		panic(err)
-	}
+ 				)')!
 
 	app.db.exec('CREATE TABLE IF NOT EXISTS products(
 					id INTEGER PRIMARY KEY,
-					quantity INTEGER,
-					name TEXT NOT NULL,
+					img TEXT NOT NULL,
+					q_on_hand INTEGER,
+					name TEXT NOT NULL UNIQUE,
 					description TEXT NOT NULL,
 					price REAL NOT NULL,
 					price_break INTEGER NOT NULL,
 					break_amount REAL NOT NULL
-				)') or {
-		panic(err)
-	}
+				)')!
 
-	app.db.exec('INSERT INTO banner (date, message) VALUES ("Aug 27", "Now roasting Brazil Cerado!")') or {
+	app.db.exec('create table if not exists carts(
+					id integer primary key,
+					cart_id string
+				)')!
+
+	app.db.exec('create table if not exists customer_carts(
+					id integer primary key,
+					cart_id string,
+					product_id integer,
+					quantity integer
+				)')!
+
+	app.db.exec('INSERT OR IGNORE INTO banner (date, message) VALUES ("Aug 27", "Now roasting Brazil Cerado!")') or {
 		panic(err)
 	}
-	app.db.exec('INSERT INTO products (quantity,  name, description, price, price_break, break_amount) VALUES
-					("22", "Regular Blend", "Our most loved blend of coffee. Featuring coffees from South America and Northern Africa", "11.00", "4", "1")') or {
+	app.db.exec('INSERT OR IGNORE INTO products (img, q_on_hand,  name, description, price, price_break, break_amount) VALUES
+					("https://i.imgur.com/qhpLaUK.jpeg", "22", "Regular Blend", "Our most loved blend of coffee. Featuring coffees from South America and Northern Africa", "11.00", "4", "1")') or {
+		panic(err)
+	}
+	app.db.exec('INSERT OR IGNORE INTO products (img, q_on_hand,  name, description, price, price_break, break_amount) VALUES
+					("https://i.imgur.com/lRmCoAY.jpg", "4", "Reusable K Cup", "Save the earth, reuse this piece of plastic FOREVER", "4.99", "10", "1")') or {
 		panic(err)
 	}
 
@@ -61,17 +88,19 @@ fn main() {
 	vweb.run(app, 8088)
 }
 
+[middleware: cart_middleware]
 ['/']
 pub fn (app &App) index() vweb.Result {
 	banner := app.get_banner()
 	return $vweb.html()
 }
 
+[middleware: cart_middleware]
 ['/shop']
 pub fn (mut app App) shop() vweb.Result {
 	mut products := app.get_products() or { []Product{} }
 	for i, product in products {
-		products[i].quantity = math.min(4, product.quantity)
+		products[i].q_on_hand = math.min(4, product.q_on_hand)
 	}
 	return $vweb.html()
 }
@@ -80,22 +109,24 @@ pub fn (mut app App) shop() vweb.Result {
 pub fn (mut app App) price_per() vweb.Result {
 	// should probably take in the items id, to send less over the network
 	println(app.query['id'])
-	quantity := app.query['quantity'].int()
 	id := app.query['id']
-	row := app.db.exec_param('SELECT * FROM products WHERE id = ? LIMIT 1', id) or { panic(err) }
+	quantity := app.query['quantity${id}'].int()
+	println(quantity)
+	row := app.db.exec_param('SELECT price, price_break, break_amount FROM products WHERE id = ? LIMIT 1',
+		id) or { panic(err) }
 	if row.len == 0 {
 		app.set_status(204, 'no product')
 		return app.html('')
 	}
-	price := row[0].vals[4].f64()
-	price_break := row[0].vals[5].int()
-	break_amount := row[0].vals[6].int()
+	price := row[0].vals[0].f64()
+	price_break := row[0].vals[1].int()
+	break_amount := row[0].vals[2].int()
 	mut result_price := price * quantity
 	if quantity >= price_break {
 		result_price -= break_amount * quantity
 	}
 	return app.text('
-<span id="price" hx-swap-oob="true">${result_price:.2f}</span>')
+<span id="price${id}" hx-swap-oob="true">${result_price:.2f}</span>')
 }
 
 fn (app &App) get_banner() string {
@@ -112,15 +143,115 @@ fn (app &App) get_products() ?[]Product {
 	for row in rows {
 		product := Product{
 			id: row.vals[0].int()
-			quantity: row.vals[1].int()
-			name: row.vals[2]
-			description: row.vals[3]
-			price: row.vals[4].f64()
-			price_break: row.vals[5].int()
-			break_amount: row.vals[6].int()
+			img: row.vals[1]
+			q_on_hand: row.vals[2].int()
+			name: row.vals[3]
+			description: row.vals[4]
+			price: row.vals[5].f64()
+			price_break: row.vals[6].int()
+			break_amount: row.vals[7].int()
 		}
 		products << product
 	}
 
 	return products
+}
+
+[middleware: cart_middleware]
+['/add_to_cart/:id']
+pub fn (mut app App) add(id string) vweb.Result {
+	if app.cart == Cart{} {
+		return app.text('')
+	}
+	quantity := app.query['quantity${id}']
+	app.db.exec_param_many('INSERT INTO customer_carts (cart_id, product_id, quantity)
+						VALUES (?, ?, ?)',
+		[app.cart.cart_id, id, quantity]) or { panic(err) }
+	rows := app.db.exec_param('SELECT img, name, price, price_break,
+								break_amount, quantity FROM products join
+								customer_carts ON products.id = customer_carts.product_id
+								WHERE customer_carts.cart_id = ?',
+		app.cart.cart_id) or { panic(err) }
+	if rows.len == 0 {
+		return app.text('here') // query broken above
+	}
+	mut cart := []Cart_Product{}
+	for row in rows {
+		product := Cart_Product{
+			product: Product{
+				img: row.vals[0]
+				name: row.vals[1]
+				price: row.vals[2].f64()
+				price_break: row.vals[3].int()
+				break_amount: row.vals[4].int()
+			}
+			quantity: row.vals[5].int()
+		}
+		println(product)
+
+		cart << product
+	}
+
+	return $vweb.html()
+}
+
+['/clear_cart'; delete]
+pub fn (mut app App) clear_cart() vweb.Result {
+	cart_id := app.get_cookie('cart_id') or { return app.text('') }
+	app.db.exec_param('DELETE FROM customer_carts WHERE cart_id = ?', cart_id) or {
+		return app.text('customer_carts delete failed')
+	}
+	app.db.exec_param('DELETE FROM carts WHERE cart_id = ?', cart_id) or {
+		return app.text('carts delete failed')
+	}
+	return app.text('
+<div hx-swap-oob="true" id="cart_list">
+<span class="text-stone-400 p-4">Your shopping cart is empty</span>
+</div>
+')
+}
+
+pub fn (mut app App) cart_middleware() bool {
+	cart_id := app.get_cookie('cart_id') or { '' }
+	res := app.db.exec_param('SELECT id from carts where cart_id = ?', cart_id) or { panic(err) }
+	if cart_id.len == 0 || res.len == 0 {
+		uuid := rand.uuid_v4()
+		app.db.exec_param('INSERT INTO carts (cart_id) VALUES (?)', uuid) or { panic(err) }
+		app.set_cookie(name: 'cart_id', value: uuid)
+		app.cart.cart_id = uuid
+		return true
+	}
+	id := res[0].vals[0]
+	rows := app.db.exec_param('SELECT img, name, price, price_break,
+								break_amount, quantity FROM products join
+								customer_carts ON products.id = customer_carts.product_id
+								WHERE customer_carts.cart_id = ?',
+		cart_id) or { panic(err) }
+	if rows.len == 0 {
+		println('nothing from db')
+		app.cart.cart_id = cart_id
+		return true
+	}
+	mut cart := []Cart_Product{}
+	for row in rows {
+		product := Cart_Product{
+			product: Product{
+				img: row.vals[0]
+				name: row.vals[1]
+				price: row.vals[2].f64()
+				price_break: row.vals[3].int()
+				break_amount: row.vals[4].int()
+			}
+			quantity: row.vals[5].int()
+		}
+		println(product)
+
+		cart << product
+	}
+	app.cart = Cart{
+		cart_id: cart_id
+		items: cart
+	}
+	println(cart)
+	return true
 }

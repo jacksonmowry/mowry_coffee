@@ -1,23 +1,22 @@
 @for product in products
 <div id="card" class="flex w-96 flex-col gap-2 overflow-hidden rounded-xl bg-white shadow-sm">
-    <img class="w-full self-center" src="https://i.imgur.com/qhpLaUK.jpg" alt="" />
+    <img class="w-full self-center" src="@product.img" alt="" />
     <div class="flex flex-col gap-2 p-4">
         <div class="font-semibold">@product.name</div>
         <p>@product.description</p>
         <div class="self-center my-4">
             <label for="quantity">Qty:</label>
-            <select hx-get="/price_per?id=@product.id" hx-swap="none" id="quantity" name="quantity" class="flex-start open:h-10 p-1 bg-gray-50 border border-gray-300 rounded-lg focus:ring-orange-400 focus:border-orange-400">
-                @for i in 1..product.quantity+1
+            <select hx-get="/price_per?id=@product.id" hx-swap="none" id="quantity@product.id" name="quantity@product.id" class="flex-start open:h-10 p-1 bg-gray-50 border border-gray-300 rounded-lg focus:ring-orange-400 focus:border-orange-400">
+                @for i in 1..product.q_on_hand+1
                 <option value="$i">$i</option>
                 @end
             </select>
-            <a href="#" class="my-4 self-center"
-            ><span class="rounded-l-full border-2 border-r-0 border-orange-400 p-2"><span>$</span><span id="price">${product.price:.2f}</span></span
-                                                                                                                      ><span class="rounded-r-full border-2 border-orange-400 bg-orange-400 p-2">
+            <button hx-swap="none" hx-get="/add_to_cart/@product.id" hx-include="[name='quantity@product.id']" class="my-4 self-center"
+            ><span class="rounded-l-full border-2 border-r-0 border-orange-400 p-2"><span>$</span><span id="price@product.id">${product.price:.2f}</span></span><span class="rounded-r-full border-2 border-orange-400 bg-orange-400 p-2">
                 Add to cart
                 <svg class="inline h-4 w-4" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" stroke-linecap="round" stroke-linejoin="round"></path></svg></span
-                                                                                                                                                                                                                                                                                                                                                                      ></a>
+                                                                                                                                                                                                                                                                                                                                                                      ></button>
         </div>
     </div>
 </div>

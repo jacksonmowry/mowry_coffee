@@ -25,8 +25,9 @@ mut:
 }
 
 struct Cart_Product {
-	product  Product
-	quantity int
+	product    Product
+	quantity   int
+	cart_index int
 }
 
 struct Cart {
@@ -77,7 +78,7 @@ fn main() {
 		panic(err)
 	}
 	app.db.exec('INSERT OR IGNORE INTO products (img, q_on_hand,  name, description, price, price_break, break_amount) VALUES
-					("https://i.imgur.com/lRmCoAY.jpg", "4", "Reusable K Cup", "Save the earth, reuse this piece of plastic FOREVER", "4.99", "10", "1")') or {
+					("https://i.imgur.com/lRmCoAY.jpg", "4", "Reusable K Cup", "Save the earth, reuse this piece of plastic FOREVER", "4.99", "2", "1")') or {
 		panic(err)
 	}
 
@@ -100,18 +101,17 @@ pub fn (app &App) index() vweb.Result {
 pub fn (mut app App) shop() vweb.Result {
 	mut products := app.get_products() or { []Product{} }
 	for i, product in products {
-		products[i].q_on_hand = math.min(4, product.q_on_hand)
+		products[i].q_on_hand = math.min(product.price_break, product.q_on_hand)
 	}
 	return $vweb.html()
 }
 
+[middleware: cart_middleware]
 ['/price_per']
 pub fn (mut app App) price_per() vweb.Result {
 	// should probably take in the items id, to send less over the network
-	println(app.query['id'])
 	id := app.query['id']
 	quantity := app.query['quantity${id}'].int()
-	println(quantity)
 	row := app.db.exec_param('SELECT price, price_break, break_amount FROM products WHERE id = ? LIMIT 1',
 		id) or { panic(err) }
 	if row.len == 0 {
@@ -166,9 +166,45 @@ pub fn (mut app App) add(id string) vweb.Result {
 	quantity := app.query['quantity${id}']
 	app.db.exec_param_many('INSERT INTO customer_carts (cart_id, product_id, quantity)
 						VALUES (?, ?, ?)',
-		[app.cart.cart_id, id, quantity]) or { panic(err) }
+		[app.get_cookie('cart_id') or { '' }, id, quantity]) or { panic(err) }
+	last := app.db.last_insert_rowid()
+	row := app.db.exec_param_many('SELECT img, name, price, price_break,
+								break_amount, quantity, customer_carts.id as cart_index FROM products join
+								customer_carts ON products.id = customer_carts.product_id
+								WHERE customer_carts.cart_id = ? AND cart_index = ?',
+		[app.get_cookie('cart_id') or { '' }, last.str()]) or { panic(err) }
+	if row.len == 0 {
+		return app.text('here') // query broken above
+	}
+	mut cart := []Cart_Product{}
+
+	product := Cart_Product{
+		product: Product{
+			img: row[0].vals[0]
+			name: row[0].vals[1]
+			price: row[0].vals[2].f64()
+			price_break: row[0].vals[3].int()
+			break_amount: row[0].vals[4].int()
+		}
+		quantity: row[0].vals[5].int()
+		cart_index: row[0].vals[6].int()
+	}
+
+	cart << product
+
+	return $vweb.html()
+}
+
+[middleware: cart_middleware]
+['/remove/:cart_index'; delete]
+pub fn (mut app App) remove(cart_index string) vweb.Result {
+	if cart_index == '' {
+		return app.text('')
+	}
+
+	app.db.exec_param('DELETE FROM customer_carts WHERE id = ?', cart_index) or { panic(err) }
 	rows := app.db.exec_param('SELECT img, name, price, price_break,
-								break_amount, quantity FROM products join
+								break_amount, quantity, customer_carts.id as cart_index FROM products join
 								customer_carts ON products.id = customer_carts.product_id
 								WHERE customer_carts.cart_id = ?',
 		app.cart.cart_id) or { panic(err) }
@@ -186,8 +222,8 @@ pub fn (mut app App) add(id string) vweb.Result {
 				break_amount: row.vals[4].int()
 			}
 			quantity: row.vals[5].int()
+			cart_index: row.vals[6].int()
 		}
-		println(product)
 
 		cart << product
 	}
@@ -195,40 +231,51 @@ pub fn (mut app App) add(id string) vweb.Result {
 	return $vweb.html()
 }
 
+[middleware: cart_middleware]
 ['/clear_cart'; delete]
 pub fn (mut app App) clear_cart() vweb.Result {
 	cart_id := app.get_cookie('cart_id') or { return app.text('') }
 	app.db.exec_param('DELETE FROM customer_carts WHERE cart_id = ?', cart_id) or {
 		return app.text('customer_carts delete failed')
 	}
-	app.db.exec_param('DELETE FROM carts WHERE cart_id = ?', cart_id) or {
-		return app.text('carts delete failed')
-	}
 	return app.text('
 <div hx-swap-oob="true" id="cart_list">
-<span class="text-stone-400 p-4">Your shopping cart is empty</span>
+<span class="text-stone-400 p-4 hidden last:block">Your shopping cart is empty</span>
 </div>
 ')
+}
+
+pub fn actual_price(quantity int, price f64, price_break int, break_amount int) f64 {
+	println(quantity)
+	println(price)
+	println(price_break)
+	println(break_amount)
+	mut actual := price * quantity
+	if quantity >= price_break {
+		actual -= break_amount * quantity
+	}
+	println(actual)
+	return actual
 }
 
 pub fn (mut app App) cart_middleware() bool {
 	cart_id := app.get_cookie('cart_id') or { '' }
 	res := app.db.exec_param('SELECT id from carts where cart_id = ?', cart_id) or { panic(err) }
 	if cart_id.len == 0 || res.len == 0 {
+		println('assigning a new cart_id')
 		uuid := rand.uuid_v4()
 		app.db.exec_param('INSERT INTO carts (cart_id) VALUES (?)', uuid) or { panic(err) }
 		app.set_cookie(name: 'cart_id', value: uuid)
 		app.cart.cart_id = uuid
 		return true
 	}
-	id := res[0].vals[0]
+	// id := res[0].vals[0]
 	rows := app.db.exec_param('SELECT img, name, price, price_break,
-								break_amount, quantity FROM products join
+								break_amount, quantity, customer_carts.id as cart_index FROM products join
 								customer_carts ON products.id = customer_carts.product_id
 								WHERE customer_carts.cart_id = ?',
 		cart_id) or { panic(err) }
 	if rows.len == 0 {
-		println('nothing from db')
 		app.cart.cart_id = cart_id
 		return true
 	}
@@ -243,8 +290,8 @@ pub fn (mut app App) cart_middleware() bool {
 				break_amount: row.vals[4].int()
 			}
 			quantity: row.vals[5].int()
+			cart_index: row.vals[6].int()
 		}
-		println(product)
 
 		cart << product
 	}
@@ -252,6 +299,5 @@ pub fn (mut app App) cart_middleware() bool {
 		cart_id: cart_id
 		items: cart
 	}
-	println(cart)
 	return true
 }

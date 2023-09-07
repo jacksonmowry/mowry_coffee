@@ -1,53 +1,61 @@
-<nav class="sticky top-0 flex w-full items-center justify-between border-b border-gray-200 bg-white h-min">
-    <a href="/" class="">
-        <div class="m-2 rounded bg-orange-400 p-2 h-min">
-            <svg class="h-10 w-20" xmlns="http://www.w3.org/2000/svg" width="1307.52" height="646.53" preserveAspectRatio="xMidYMid" version="1.0" viewBox="0 0 980.64 484.9"><path d="M797.1 1.16c-106.23 6.97-185.54 77.43-206.84 183.8-10.45 51.85-6.03 111.87 11.92 159.83 16.35 43.94 46.62 82.52 83.06 105.83 17.96 11.52 42.6 22.1 63.37 27.33 36.17 9.24 88.82 9.24 127 .13 36.84-8.7 72.48-29.2 98.07-56.4 3.75-4.15 6.96-8.03 6.96-8.7 0-.67-6.43-8.04-14.47-16.35-13.8-14.47-14.6-15-19.96-15-4.28 0-6.83 1.07-11.38 4.69-26.26 20.9-40.06 29.07-59.35 34.83-20.63 6.16-25.46 6.7-56.94 6.7-37.38-.14-46.35-1.88-76.63-15.14-18.22-8.04-44.2-30.82-56.93-49.84-22.38-33.5-32.16-66.45-33.5-112.53-1.47-49.57 8.58-89.5 31.35-124.86 7.77-12.06 30.41-35.23 41.26-42.06 27.2-17.29 51.58-24.39 87.08-25.6 42.74-1.33 71.94 6.97 107.31 30.69 12.86 8.57 15.27 9.78 20.9 9.78 7.77 0 9.24-1.34 23.85-21.7l11.25-15.55-7.23-6.56C941.12 31.17 899.99 11.2 864.09 4.5c-9.24-1.74-48.36-5.1-50.9-4.42-.4 0-7.64.53-16.08 1.07zM0 242.17v237.25h57.74L57.34 292c-.27-103.15-.27-187.42-.27-187.28.13.13 36.84 65.9 81.59 146.29 44.74 80.25 82.92 148.17 84.93 150.71 6.43 8.04 11.12 10.05 24.92 9.92 12.86 0 17.55-1.48 23.04-7.5 1.61-1.61 39.39-69.67 84.13-151.12a59429.07 59429.07 0 0 1 81.46-148.17c.13-.13.13 84-.14 187.15l-.27 187.42H493V5.18l-23.71.13c-30.95.14-36.98.94-41.8 6.03-2.14 2.14-39.92 69.53-84.13 149.91-88.96 161.57-84.94 154.06-90.83 168.4l-4.15 10.45-6.7-15.28c-6.97-15.67-9.78-20.76-112.13-203.09-53.59-95.25-62.7-110.8-66.72-113.2-4.15-2.41-7.5-2.68-33.63-3.22L0 4.91z" /></svg>
+<nav class="flex sticky top-0 justify-between items-center w-full bg-white border-b border-gray-200 h-min">
+    <a href="/" class="" hx-boost="true">
+        <div class="p-2 m-2 bg-orange-400 rounded h-min">
+            <svg class="w-20 h-10" xmlns="http://www.w3.org/2000/svg" width="1307.52" height="646.53" preserveAspectRatio="xMidYMid" version="1.0" viewBox="0 0 980.64 484.9"><path d="M797.1 1.16c-106.23 6.97-185.54 77.43-206.84 183.8-10.45 51.85-6.03 111.87 11.92 159.83 16.35 43.94 46.62 82.52 83.06 105.83 17.96 11.52 42.6 22.1 63.37 27.33 36.17 9.24 88.82 9.24 127 .13 36.84-8.7 72.48-29.2 98.07-56.4 3.75-4.15 6.96-8.03 6.96-8.7 0-.67-6.43-8.04-14.47-16.35-13.8-14.47-14.6-15-19.96-15-4.28 0-6.83 1.07-11.38 4.69-26.26 20.9-40.06 29.07-59.35 34.83-20.63 6.16-25.46 6.7-56.94 6.7-37.38-.14-46.35-1.88-76.63-15.14-18.22-8.04-44.2-30.82-56.93-49.84-22.38-33.5-32.16-66.45-33.5-112.53-1.47-49.57 8.58-89.5 31.35-124.86 7.77-12.06 30.41-35.23 41.26-42.06 27.2-17.29 51.58-24.39 87.08-25.6 42.74-1.33 71.94 6.97 107.31 30.69 12.86 8.57 15.27 9.78 20.9 9.78 7.77 0 9.24-1.34 23.85-21.7l11.25-15.55-7.23-6.56C941.12 31.17 899.99 11.2 864.09 4.5c-9.24-1.74-48.36-5.1-50.9-4.42-.4 0-7.64.53-16.08 1.07zM0 242.17v237.25h57.74L57.34 292c-.27-103.15-.27-187.42-.27-187.28.13.13 36.84 65.9 81.59 146.29 44.74 80.25 82.92 148.17 84.93 150.71 6.43 8.04 11.12 10.05 24.92 9.92 12.86 0 17.55-1.48 23.04-7.5 1.61-1.61 39.39-69.67 84.13-151.12a59429.07 59429.07 0 0 1 81.46-148.17c.13-.13.13 84-.14 187.15l-.27 187.42H493V5.18l-23.71.13c-30.95.14-36.98.94-41.8 6.03-2.14 2.14-39.92 69.53-84.13 149.91-88.96 161.57-84.94 154.06-90.83 168.4l-4.15 10.45-6.7-15.28c-6.97-15.67-9.78-20.76-112.13-203.09-53.59-95.25-62.7-110.8-66.72-113.2-4.15-2.41-7.5-2.68-33.63-3.22L0 4.91z" /></svg>
         </div>
     </a>
-    <div id="rightNav" class="relative flex justify-end items-center">
-        <details id="cart" class="pr-4 sm:pr-10">
+    <div id="rightNav" class="flex relative justify-end items-center">
+        <details id="cart" class="pr-4 sm:pr-10 peer group">
             <summary class="list-none">
-                <svg class="h-8 w-8" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" stroke-linecap="round" stroke-linejoin="round"></path>
-                </svg>
+                <div class="-mt-1 h-10">
+                    <svg class="top-2 m-2 mt-3 w-8 h-8 opacity-100 transition duration-500 transform origin-bottom group-open:scale-0 group-open:opacity-0" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                    <svg class="absolute top-0 m-2 mt-2 sm:mt-3 w-8 h-8 opacity-0 scale-0 transition duration-500 origin-bottom group-open:scale-100 group-open:opacity-100" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                </div>
             </summary>
             <div class="relative">
                 @include 'cart.html'
             </div>
         </details>
-        <details class="group sm:hidden">
+        <details class="sm:hidden group peer-open:invisible">
             <summary class="list-none">
-                <div class="h-10 -mt-1">
-                    <svg class="m-2 mt-1 top-2 h-10 w-10 transform opacity-100 transition duration-500 group-open:rotate-90 group-open:opacity-0" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <div class="-mt-1 h-10">
+                    <svg class="top-2 m-2 mt-1 w-10 h-10 opacity-100 transition duration-500 transform group-open:rotate-90 group-open:opacity-0" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" stroke-linecap="round" stroke-linejoin="round"></path>
                     </svg>
-                    <svg class="absolute top-2 -mt-2 right-0 m-2 h-10 w-10 opacity-0 transition duration-500 group-open:rotate-90 group-open:opacity-100" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <svg class="absolute right-0 top-2 m-2 -mt-1 w-10 h-10 opacity-0 transition duration-500 group-open:rotate-90 group-open:opacity-100" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 </div>
             </summary>
-            <div class="absolute right-0 z-50 mt-3 h-0 w-screen origin-top scale-50 transform bg-white shadow-xl px-4 py-8 text-black transition duration-200 ease-in-out group-open:h-max group-open:scale-100">
+            <div class="absolute right-0 z-50 py-8 px-4 mt-3 w-screen h-0 text-black bg-white shadow-xl transition duration-200 ease-in-out transform origin-top scale-50 group-open:h-max group-open:scale-100">
                 <ul class="flex flex-col gap-2 px-4">
                     <li>
-                        <a href="/shop" class="flex items-center text-orange-400"
-                        >Order Now<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-1.5 h-5 w-5">
+                        <a href="/shop" hx-boost="true" class="flex items-center text-orange-400"
+                        >Order Now<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-1.5 w-5 h-5">
                             <path d="M5 12h14"></path>
                             <path d="m12 5 7 7-7 7"></path></svg
                                                            ></a>
                     </li>
-                    <li class="my-3 h-px w-full bg-stone-200"></li>
-                    <li><a href="#">Blog</a></li>
-                    <li class="my-3 h-px w-full bg-stone-200"></li>
-                    <li><a href="#">About Us</a></li>
+                    <li class="my-3 w-full h-px bg-stone-200"></li>
+                    <li><a href="/blog" hx-boost="true">Blog</a></li>
+                    <li class="my-3 w-full h-px bg-stone-200"></li>
+                    <li><a href="#" hx-boost="true">About Us</a></li>
+                    <li class="my-3 w-full h-px bg-stone-200"></li>
+                    <li><a href="https://billing.stripe.com/p/login/6oE16A2qC7RQ6WcfYY">Subscriptions</a></li>
                 </ul>
             </div>
         </details>
         <div class="hidden p-2 sm:block">
-            <ul class="flex items-center gap-10">
-                <li><a href="#">Blog</a></li>
-                <li><a href="#">About Us</a></li>
-                <a href="/shop" class="flex items-center rounded-full bg-orange-400 px-4 py-2 text-white"
-                >Order Now<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-1.5 h-5 w-5">
+            <ul class="flex gap-10 items-center">
+                <li><a href="/blog" hx-boost="true">Blog</a></li>
+                <li><a href="#" hx-boost="true">About Us</a></li>
+                <li><a href="https://billing.stripe.com/p/login/6oE16A2qC7RQ6WcfYY">Subscriptions</a></li>
+                <a hx-boost="true" href="/shop" class="flex items-center py-2 px-4 text-white bg-orange-400 rounded-full"
+                >Order Now<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-1.5 w-5 h-5">
                     <path d="M5 12h14"></path>
                     <path d="m12 5 7 7-7 7"></path></svg
                                                    ></a>

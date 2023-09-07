@@ -14,22 +14,24 @@
                 <div class="flex items-center justify-center rounded-full border-2 border-stone-200 px-4 py-2 bg-white">
                     <span class="font-semibold">@banner</span>
                 </div>
-                <div class="font-heading mb-6 mt-4 text-center text-4xl font-bold sm:text-5xl md:text-6xl lg:text-7xl">
+                <div class="font-heading mb-6 text-center text-4xl font-bold sm:text-5xl md:text-6xl lg:text-7xl">
                     Roasting <br class="block sm:hidden" /><span class="text-orange-400">fresh coffee</span>
                     in Kingston, Tennessee
                 </div>
                 <p class="text-center" style="text-wrap:balance;">Coffee delivered straight to your doorstep, <br class="hidden sm:block" />or shipped anywhere in the world.</p>
-                <a href="/shop" class="mt-4 rounded-full bg-orange-400 px-4 py-2 text-white">Get coffee delivered</a>
-                <a href="#info" class="scroll-mt-20"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground mt-16"><path d="m6 9 6 6 6-6"></path></svg></a>
+                <a href="/shop" hx-boost="true" class="mt-4 rounded-full bg-orange-400 px-4 py-2 text-white">Get coffee delivered</a>
+                <a href="#info" class="scroll-mt-20"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                                          fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                          stroke-linejoin="round" class="text-muted-foreground mt-16 animate-bounce"><path d="m6 9 6 6 6-6"></path></svg></a>
             </div>
             <div class="my-20"></div>
-            <div id="info" class="scroll-mt-20 bg-white flex w-9/12 flex-col justify-between rounded-xl border-2 border-gray-200 p-4 md:flex-row lg:w-7/12">
+            <div id="info" class="scroll-mt-20 bg-white flex w-11/12 flex-col justify-between rounded-xl border-2 border-gray-200 p-4 md:flex-row lg:w-7/12">
                 <div class="flex-1">
                     <h2 class="mb-4 text-4xl font-semibold sm:text-5xl">
                         Single batch.<br />
                         Big <span class="text-orange-400">taste</span>.
                     </h2>
-                    <p>Each bag of coffee is carefully roasted one at a time. <a href="/shop" class="text-orange-400 underline">Check our offerings</a></p>
+                    <p>Each bag of coffee is carefully roasted one at a time. <a href="/shop" hx-boost="true" class="text-orange-400 underline">Check our offerings</a></p>
                     <div class="my-4 flex flex-col gap-2">
                         <div>
                             <svg class="inline h-6 w-6 fill-orange-400 stroke-inherit" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -42,7 +44,7 @@
                             <svg class="inline h-6 w-6 fill-orange-400 stroke-inherit" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"></path>
                             </svg>
-                            <span class="inline font-semibold">Peronal</span>
+                            <span class="inline font-semibold">Personal</span>
                             - We offer 3 different roast levels, and will grind for any brew method.
                         </div>
                         <div>
@@ -54,25 +56,25 @@
                         </div>
                     </div>
                 </div>
-                <img src="https://www.steelbridgecoffee.com/uploads/8/9/2/9/8929819/published/coffee-jar.jpg?1675013406" alt="" class="h-96 w-72 self-center overflow-hidden rounded-3xl object-cover object-right p-4" />
+                <img src="https://i.imgur.com/3uVFcHv.jpg" alt="" class="h-96 w-72 self-center overflow-hidden rounded-3xl object-cover object-right p-4" />
             </div>
             <div class="my-16"></div>
             <div class="flex flex-col items-center">
                 <h2 class="my-4 text-4xl font-bold sm:text-5xl">2 ways to go</h2>
                 <p class="text-center" style="text-wrap: balance;">
                     Order coffee when you need it,<br class="block sm:hidden" />
-                    or make sure you never run out with a subscription
+                    or make sure you never run out <br class="block sm:hidden">with a <a href="/shop" hx-boost="true" class="text-orange-400 underline">subscription</a>
                 </p>
                 <div class="my-4 flex w-9/12 flex-col justify-between gap-8 sm:flex-row">
                     <div class="flex flex-1 flex-col">
                         <div class="my-3 h-1 w-full bg-stone-300"></div>
                         <span class="py-2 font-semibold">Single Order</span>
-                        <p style="text-wrap: balance;">Each 12oz. <a href="/shop" class="text-orange-400 underline">bag of coffee</a> starts at just $11, with discounts as order quantity increases.</p>
+                        <p style="text-wrap: balance;">Each 12oz. <a href="/shop" hx-boost="true" class="text-orange-400 underline">bag of coffee</a> starts at just $11, with discounts as order quantity increases.</p>
                     </div>
                     <div class="flex flex-1 flex-col">
                         <div class="my-3 h-1 w-full bg-stone-300"></div>
                         <span class="py-2 font-semibold">Subscription</span>
-                        <p style="text-wrap: balance;">Monthly <a href="#" class="text-orange-400 underline">subscriptions</a> can be delievered throughout the month, all at once, or shipped once a month.</p>
+                        <p style="text-wrap: balance;">Monthly <a href="/shop" hx-boost="true" class="text-orange-400 underline">subscriptions</a> can be delievered throughout the month, all at once, or shipped once a month.</p>
                     </div>
                 </div>
                 <p class="py-4 text-center text-xs" style="text-wrap: balance;">All orders of 4 bags or more will receive a discount of $1 per bag</p>

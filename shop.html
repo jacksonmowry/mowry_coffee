@@ -7,11 +7,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="output.css" type="text/css" media="screen" />
     </head>
-    <body class="">
-        <div class="grainy mb-20 flex w-full flex-col items-center h-max">
+    <body class="grainy">
+        <div class="flex flex-col items-center mb-20 w-full h-full">
             @include 'nav.html'
-            <div class="flex gap-4 w-5/6 md:w-2/3 flex-wrap justify-center py-4">
-                @include 'product.html'
+            <div class="flex flex-wrap gap-4 justify-center py-4 w-5/6 md:w-2/3">
+                <div class="flex justify-center w-full" id="category-selector">
+                    @include 'subscription_selected.html'
+                </div>
+                <div id="products" class="flex justify-center gap-8 flex-wrap py-4 w-full">
+                    @include 'subscription_item.html'
+                    @include 'k_cup.html'
+                </div>
             </div>
         </div>
     </body>

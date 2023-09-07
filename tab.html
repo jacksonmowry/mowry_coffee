@@ -1,0 +1,11 @@
+@if category == "single"
+    @include 'single_selected.html'
+    <div hx-swap-oob="innerHTML" id="products">
+        @include 'product.html'
+    </div>
+@else
+    @include 'subscription_selected.html'
+    <div hx-swap-oob="innerHTML" id="products">
+        @include 'subscription_item.html'
+    </div>
+@end

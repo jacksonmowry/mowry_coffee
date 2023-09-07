@@ -1,0 +1,50 @@
+<div class="flex overflow-scroll flex-col items-start w-full rounded sm:rounded-xl">
+    <table class="min-w-full rounded border-collapse table-auto sm:rounded-xl">
+        <thead class="w-full text text-left text-black bg-white rounded-t sm:rounded-t-xl">
+            <tr class="">
+                <th class="py-4 px-2 whitespace-nowrap">Image</th>
+                <th class="py-4 px-2 whitespace-nowrap">Title</th>
+                <th class="py-4 px-2">QOH</th>
+                <th class="py-4 px-2">Price</th>
+                <th class="py-4 px-2">Break At</th>
+                <th class="py-4 px-2">Bulk Price</th>
+                <th class="py-4 px-2">price_id</th>
+            </tr>
+        </thead>
+        <tbody class="text-gray-700">
+            @for product in products
+            <tr class="even:bg-gray-100 bg-white border-y border-gray-200 ring-orange-300 ring-inset hover:ring rounded-xl">
+                <td class="py-2 px-2"><img src="@product.img" alt="" class="w-8 h-8 md:w-16 md:h-16" /></td>
+                <td class="py-2 px-2 text-black">@product.name</td>
+                <td class="py-2 px-2 w-min">
+                    @if product.q_on_hand == 0
+                        @include 'spinner.html'
+                        <input class="w-5/6 inline" type="number" id="new_q@product.id" name="new_q@product.id"
+                               hx-post="/update_q/@product.id"
+                               hx-swap="innerHTML"
+                               hx-trigger="keyup changed delay:500ms, new_q@product.id"
+                               hx-indicator=".htmx-indicator"
+                               hx-target="closest td">
+                    @else
+                        @product.q_on_hand
+                    @end
+                </td>
+                <td class="py-2 px-2">${product.default_price / f64(100):.2f}</td>
+                @if product.price_break_at == 0
+                    <td class="py-2 px-2"></td>
+                    <td class="py-2 px-2"></td>
+                @else
+                    <td class="py-2 px-2">@product.price_break_at</td>
+                    <td class="py-2 px-2">${product.bulk_price / f64(100):.2f}</td>
+                @end
+                <td class="py-2 px-2 whitespace-nowrap">
+                    Default Price: <span class="font-mono pl-1">@product.default_price_id</span>
+                    @if product.price_break_at != 0
+                    <br>Bulk Price: <span class="font-mono pl-6">@product.bulk_price_id</span>
+                    @end
+                </td>
+            </tr>
+            @end
+        </tbody>
+    </table>
+</div>

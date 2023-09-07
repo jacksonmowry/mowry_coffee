@@ -86,6 +86,12 @@ fn main() {
 					sales integer
 				)')!
 
+	app.db.exec('create table if not exists secrets(
+					id integer primary key,
+					name text,
+					secret text
+				)')!
+
 	app.db.exec('INSERT OR IGNORE INTO banner (date, message) VALUES ("Aug 27", "Now roasting Brazil Cerado!")') or {
 		panic(err)
 	}
@@ -122,6 +128,9 @@ pub fn (mut app App) stripekey() vweb.Result {
 	stripe_key := app.form['stripe_key'] or { return app.text('Please provide a valid key') }
 	if stripe_key.len != 107 {
 		return app.text('Please provide the full 107 character secret key')
+	}
+	app.db.exec_param('insert into secrets (name, secret) values ("stripe key", ?)', stripe_key) or {
+		panic(err)
 	}
 	products := app.populate_products(stripe_key) or {
 		return app.text('Error fetching product information, please try again later')
@@ -175,7 +184,12 @@ pub fn (mut app App) begincheckout() vweb.Result {
 	one_time_shipping, recurring_shipping := app.calculate_shipping(shipped) or {
 		return app.redirect('/shop')
 	}
-	stripe_key := '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'
+	rows := app.db.exec('select secret from secrets') or { panic(err) }
+	if rows.len == 0 {
+		return app.redirect('/shop')
+	}
+	stripe_key := rows[0].vals[0]
+	println(stripe_key)
 	stripe_url := app.start_checkout(stripe_key, shipped, one_time_shipping, recurring_shipping) or {
 		return app.redirect('/shop')
 	}

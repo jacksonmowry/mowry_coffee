@@ -1,7 +1,7 @@
 module main
 
 import vweb
-import markdown
+// import markdown
 
 ['/blog']
 pub fn (mut app App) blog() vweb.Result {

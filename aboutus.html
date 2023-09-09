@@ -1,0 +1,40 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        @js '/htmx.min.js'
+        <meta charset="utf-8">
+        <title>Mowry Coffee</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="output.css" type="text/css" media="screen" />
+    </head>
+    <body class="grainy">
+        <div class="grainy mb-20 flex w-full flex-col items-center h-max">
+            @include 'nav.html'
+            <h1 class="text-4xl underline text-gray-700 font-semibold mt-10">About Us</h1>
+            <div class="bg-white shadow-xl p-4 rounded-lg mt-10 w-11/12 sm:w-1/2 flex flex-col xl:flex-row gap-4">
+                <img src="https://i.imgur.com/7CNkU6K.jpg" class="h-96 object-cover rounded-lg" />
+                <div>
+                    <div>
+                        <span class="pr-2 font-semibold">Jackson Mowry</span>
+                        <span class="italic">CEO, Founder</span>
+                    </div>
+                    <hr class="my-2">
+                    <p>Jackson founded Mowry Coffee in 2021, with a mission to
+                        provide fresh, and tasty coffee to his local community.
+                        Soon after starting, orders were being placed by family
+                        and friends all over the country. The business quickly
+                        grew to be able to provide wonderful coffee to customers
+                        all over. </p>
+                    <p class="pt-2">He is currently attending University of Tennessee
+                        Knoxville, persuring a degree in computer science
+                        with the goal of working in the tech field some day. </p><br>
+                    <span class="pt-2">
+                        <b>email:</b>
+                        <a href="mailto:mowrycoffee$@gmail.com"
+                           class="underline text-orange-400 font-semibold">mowrycoffee$@gmail.com</a>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

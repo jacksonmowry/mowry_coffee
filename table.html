@@ -17,17 +17,13 @@
                 <td class="py-2 px-2"><img src="@product.img" alt="" class="w-8 h-8 md:w-16 md:h-16" /></td>
                 <td class="py-2 px-2 text-black">@product.name</td>
                 <td class="py-2 px-2 w-min">
-                    @if product.q_on_hand == 0
-                        @include 'spinner.html'
-                        <input class="w-5/6 inline" type="number" id="new_q@product.id" name="new_q@product.id"
-                               hx-post="/update_q/@product.id"
-                               hx-swap="innerHTML"
-                               hx-trigger="keyup changed delay:500ms, new_q@product.id"
-                               hx-indicator=".htmx-indicator"
-                               hx-target="closest td">
-                    @else
-                        @product.q_on_hand
-                    @end
+                    @include 'spinner.html'
+                    <input class="w-5/6 inline" type="number" id="new_q@product.id" name="new_q@product.id"
+                           hx-post="/update_q/@product.id"
+                           hx-swap="morph"
+                           hx-trigger="keyup changed delay:1000ms, new_q@product.id"
+                           hx-indicator=".htmx-indicator"
+                           value="@product.q_on_hand">
                 </td>
                 <td class="py-2 px-2">${product.default_price / f64(100):.2f}</td>
                 @if product.price_break_at == 0

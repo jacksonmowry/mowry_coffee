@@ -1,4 +1,4 @@
-<div hx-swap-oob="true" id="cart_list" class="flex flex-col gap-4">
+<div hx-swap-oob="innerHTML" id="cart_list" class="flex flex-col gap-4">
     <span class="text-stone-400 p-4 text-center hidden last:block">Your shopping cart is empty</span>
     @for item in cart
         @include 'render_cart.html'

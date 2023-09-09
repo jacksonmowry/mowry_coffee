@@ -63,6 +63,18 @@
                 @if products.len > 0
                     @include 'table.html'
                     @include 'analytics.html'
+                <div id="banner" class="flex flex-col gap-2 w-11/12 md:w-max bg-white rounded-xl shadow-xl mb-10 self-center">
+                    <form hx-post="/banner" hx-swap="outerHTML" hx-target="#result" class="rounded-xl shadow-xl border-gray-300 border flex flex-col gap-4 justify-between p-4 h-full">
+                        <h2 class="whitespace-nowrap text-2xl font-semibold">Update Banner</h2>
+                        <label for="date" class="block text-sm"><span class="font-semibold text-gray-500">Date</span>
+                            <input type="text" name="date" class="block w-full shadow border border-gray-200 px-2 py-1 rounded invalid:border-red-400">
+                        </label>
+                        <label for="banner" class="block text-sm"><span class="font-semibold text-gray-500">New banner message</span>
+                            <input type="text" name="banner" class="block w-full shadow border border-gray-200 px-2 py-1 rounded invalid:border-red-400">
+                        </label>
+                        <button id="result" type="submit" class="flex items-center justify-center gap-2 bg-indigo-500 rounded py-1 px-2 text-white text-center">
+                            Update banner</button>
+                    </form>
                 @else
                 <div id="stripe_form" class="flex overflow-hidden flex-col gap-2 w-11/12 md:w-max bg-white rounded-xl shadow self-center">
                     <form hx-post="/stripe_key" hx-target="#key_error" hx-swap="innerHTML" class="flex flex-col gap-4 justify-between p-4 h-full">

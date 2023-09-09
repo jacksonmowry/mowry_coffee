@@ -69,14 +69,14 @@ fn (mut app App) populate_products(stripe_key string) ?[]Product {
 		return none
 	}
 	product_response := http.fetch(url: product_url, method: .get, header: head) or { return none }.body
-	mut stripe_products := json.decode(Stripe_Product_Response, product_response) or { panic(err) }
+	mut stripe_products := json.decode(Stripe_Product_Response, product_response) or { return none }
 	prices_url := 'https://api.stripe.com/v1/prices?limit=100'
 	prices_response := http.fetch(url: prices_url, method: .get, header: head) or { return none }.body
-	prices := json.decode(Stripe_Price_Response, prices_response) or { panic(err) }
+	prices := json.decode(Stripe_Price_Response, prices_response) or { return none }
 
 	for mut product in stripe_products.data {
 		for price in prices.data {
-			billing := Billing_Type.from_string(price.billing_type) or { panic(err) }
+			billing := Billing_Type.from_string(price.billing_type) or { return none }
 			if price.id == product.default_price {
 				product.prices.prepend(struct {price.id, billing, true, price.unit_amount})
 			} else if price.product == product.id {
@@ -86,8 +86,9 @@ fn (mut app App) populate_products(stripe_key string) ?[]Product {
 	}
 
 	mut products := []Product{}
-	for product in stripe_products.data {
+	for i, product in stripe_products.data {
 		mut tmp := Product{
+			id: i + 1
 			img: product.images[0]
 			name: product.name
 			description: product.description
@@ -111,7 +112,7 @@ fn (mut app App) populate_products(stripe_key string) ?[]Product {
 											"${tmp.bulk_price}", "${tmp.bulk_price_id}",
 											"${tmp.price_break_at}", "${tmp.billing}",
 											"${tmp.stripe_product_id}", "${tmp.weight}")') or {
-			panic(err)
+			return none
 		}
 		products << tmp
 	}
@@ -120,13 +121,10 @@ fn (mut app App) populate_products(stripe_key string) ?[]Product {
 }
 
 fn (mut app App) start_checkout(stripe_key string, shipping bool, one_time_shipping int, recurring_shipping int) ?string {
-	println(shipping)
-	println(one_time_shipping)
-	println(recurring_shipping)
 	url := 'https://api.stripe.com/v1/checkout/sessions'
 	mut header := http.Header{}
-	header.add_custom('Authorization', 'Bearer ${stripe_key}') or { panic(err) }
-	header.add_custom('Content-Type', 'application/x-www-form-urlencoded') or { panic(err) }
+	header.add_custom('Authorization', 'Bearer ${stripe_key}') or { return none }
+	header.add_custom('Content-Type', 'application/x-www-form-urlencoded') or { return none }
 	mut mode := 'payment'
 	mut items := map[string]string{}
 	if app.cart.items.len == 0 {
@@ -186,6 +184,6 @@ fn (mut app App) start_checkout(stripe_key string, shipping bool, one_time_shipp
 		data: body
 	}
 
-	response := http.fetch(fc) or { panic(err) }.body
-	return json.decode(Stripe_Session_Response, response) or { panic(err) }.url
+	response := http.fetch(fc) or { return none }.body
+	return json.decode(Stripe_Session_Response, response) or { return none }.url
 }

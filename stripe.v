@@ -139,8 +139,8 @@ fn (mut app App) start_checkout(stripe_key string, shipping bool, one_time_shipp
 		items['line_items[${i}][quantity]'] = item.quantity.str()
 		shipping_idx++
 	}
-	items['success_url'] = 'http://localhost:8080/success'
-	items['cancel_url'] = 'http://localhost:8080/checkout'
+	items['success_url'] = 'http://mowry.coffee/'
+	items['cancel_url'] = 'http://mowry.coffee/checkout'
 	items['mode'] = mode
 	items['shipping_address_collection[allowed_countries][0]'] = 'US'
 	if shipping && one_time_shipping > 0 && recurring_shipping > 0 {

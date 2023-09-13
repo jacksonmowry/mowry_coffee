@@ -100,6 +100,7 @@ fn main() {
 				)')!
 
 	app.db.exec('INSERT INTO metrics (sales) VALUES ("0")')!
+	app.db.exec('INSERT INTO banner (date, message) VALUES ("Sep 09", "Opening Day!")')!
 
 	app.serve_static('/output.css', 'output.css')
 	app.serve_static('/favicon.ico', 'favicon.ico')
@@ -270,6 +271,15 @@ pub fn (mut app App) begincheckout() vweb.Result {
 		return app.redirect('/shop')
 	}
 	return app.redirect(stripe_url)
+}
+
+['/success']
+pub fn (mut app App) success() vweb.Result {
+	cart_id := app.get_cookie('cart_id') or { return app.redirect('/') }
+	app.db.exec_param('DELETE FROM customer_carts WHERE cart_id = ?', cart_id) or {
+		println('customer_carts delete failed')
+	}
+	return app.redirect('/')
 }
 
 [middleware: cart_middleware]

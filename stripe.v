@@ -2,6 +2,7 @@ module main
 
 import json
 import net.http
+import os
 
 enum Billing_Type as u8 {
 	one_time
@@ -11,14 +12,14 @@ enum Billing_Type as u8 {
 struct Stripe_Product_Response {
 mut:
 	data []struct {
+	mut:
 		id            string
 		default_price string
 		description   string
 		images        []string
 		name          string
 		metadata      map[string]string
-	mut:
-		prices []struct {
+		prices        []struct {
 			price_id      string
 			billing       Billing_Type
 			default_price bool
@@ -85,11 +86,26 @@ fn (mut app App) populate_products(stripe_key string) ?[]Product {
 		}
 	}
 
+	os.mkdir('./assets', os.MkdirParams{}) or {
+		if err.str() != 'File exists' {
+			println('error during mkdir: ${err}')
+			return error('cannot make assets dir')
+		}
+	}
+
+	mut threads := []thread string{}
+	for i, mut product in stripe_products.data {
+		// product.images[0] = convert_img_to_webp(&product.images[0], i) or { return none }
+		threads << spawn convert_img_to_webp(&product.images[0], i)
+	}
+	new_webp := threads.wait()
+
 	mut products := []Product{}
 	for i, product in stripe_products.data {
 		mut tmp := Product{
 			id: i + 1
-			img: product.images[0]
+			// img: product.images[0]
+			img: new_webp[i]
 			name: product.name
 			description: product.description
 			default_price: product.prices[0].unit_amount
@@ -186,4 +202,13 @@ fn (mut app App) start_checkout(stripe_key string, shipping bool, one_time_shipp
 
 	response := http.fetch(fc) or { return none }.body
 	return json.decode(Stripe_Session_Response, response) or { return none }.url
+}
+
+fn convert_img_to_webp(url string, pos int) string {
+	http.download_file(url, '/home/jarch/mowry_coffee/assets/${pos}.png') or { println(err) }
+
+	os.execute('convert ./assets/${pos}.png ./assets/${pos}.webp')
+	os.rm('./assets/${pos}.png') or { println(err) }
+
+	return '${pos}.webp'
 }

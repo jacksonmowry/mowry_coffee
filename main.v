@@ -105,6 +105,7 @@ fn main() {
 	app.serve_static('/output.css', 'output.css')
 	app.serve_static('/favicon.ico', 'favicon.ico')
 	app.serve_static('/htmx.min.js', 'htmx.min.js')
+	app.mount_static_folder_at('./assets', '/')
 
 	vweb.run(app, 8080)
 }

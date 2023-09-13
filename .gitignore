@@ -18,6 +18,7 @@ src/src
 # Ignore binary output folders
 bin/
 db/
+assets/
 
 # Ignore common editor/system specific metadata
 .DS_Store

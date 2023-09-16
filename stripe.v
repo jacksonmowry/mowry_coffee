@@ -86,26 +86,18 @@ fn (mut app App) populate_products(stripe_key string) ?[]Product {
 		}
 	}
 
-	os.mkdir('./assets', os.MkdirParams{}) or {
-		if err.str() != 'File exists' {
-			println('error during mkdir: ${err}')
-			return error('cannot make assets dir')
-		}
+	mut args := ''
+	for i, product in stripe_products.data {
+		args += '${product.images[0]} ./assets/${i} '
 	}
 
-	mut threads := []thread string{}
-	for i, mut product in stripe_products.data {
-		// product.images[0] = convert_img_to_webp(&product.images[0], i) or { return none }
-		threads << spawn convert_img_to_webp(&product.images[0], i)
-	}
-	new_webp := threads.wait()
+	os.execute('./assets/convert_images.sh ${args}')
 
 	mut products := []Product{}
 	for i, product in stripe_products.data {
 		mut tmp := Product{
 			id: i + 1
-			// img: product.images[0]
-			img: new_webp[i]
+			img: '${i}.webp'
 			name: product.name
 			description: product.description
 			default_price: product.prices[0].unit_amount
@@ -202,13 +194,4 @@ fn (mut app App) start_checkout(stripe_key string, shipping bool, one_time_shipp
 
 	response := http.fetch(fc) or { return none }.body
 	return json.decode(Stripe_Session_Response, response) or { return none }.url
-}
-
-fn convert_img_to_webp(url string, pos int) string {
-	http.download_file(url, '/home/jarch/mowry_coffee/assets/${pos}.png') or { println(err) }
-
-	os.execute('convert ./assets/${pos}.png ./assets/${pos}.webp')
-	os.rm('./assets/${pos}.png') or { println(err) }
-
-	return '${pos}.webp'
 }

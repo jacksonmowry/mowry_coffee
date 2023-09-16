@@ -212,6 +212,7 @@ pub fn (mut app App) stripekey() vweb.Result {
 		return app.text('Error fetching product information, please try again later')
 	}
 
+	app.mount_static_folder_at('./assets', '/')
 	return $vweb.html()
 }
 

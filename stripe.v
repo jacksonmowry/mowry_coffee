@@ -86,12 +86,19 @@ fn (mut app App) populate_products(stripe_key string) ?[]Product {
 		}
 	}
 
+	os.mkdir('./assets', os.MkdirParams{}) or {
+		if err.str() != 'File exists' {
+			println('error during mkdir: ${err}')
+			return error('cannot make assets dir')
+		}
+	}
+
 	mut args := ''
 	for i, product in stripe_products.data {
 		args += '${product.images[0]} ./assets/${i} '
 	}
 
-	os.execute('./assets/convert_images.sh ${args}')
+	os.execute('./convert_images.sh ${args}')
 
 	mut products := []Product{}
 	for i, product in stripe_products.data {
